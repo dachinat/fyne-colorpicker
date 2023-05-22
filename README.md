@@ -1,2 +1,2 @@
-# go-colorpicker
+# fyne-colorpicker
 Fyne Go color-picker app
