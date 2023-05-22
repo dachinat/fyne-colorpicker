@@ -1,2 +1,11 @@
-# fyne-colorpicker
-Fyne Go color-picker app
+# Fyne Color Picker
+
+Fyne Color Picker app written in Go
+
+#### Demo
+
+![Fyne Color Picker Demo](demo.gif)
+
+#### Contributions
+
+Contributions are welcome
