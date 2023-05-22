@@ -1,8 +1,8 @@
 Website = "https://github.com/dachinat/go-colorpicker"
 
 [Details]
-Icon = "Icon.png"
-Name = "Color Picker"
-ID = "com.dachinat.colorpicker"
-Version = "1.0.0"
-Build = 1
+  Icon = "Icon.png"
+  Name = "Color Picker"
+  ID = "com.dachinat.colorpicker"
+  Version = "1.0.0"
+  Build = 2

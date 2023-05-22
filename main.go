@@ -13,9 +13,16 @@ import (
 	"github.com/go-vgo/robotgo"
 	hook "github.com/robotn/gohook"
 	"image/color"
+	"sync"
 )
 
+var isCurrentlyPicking = false
+var eventsRegistered bool = false
+
+var wg = sync.WaitGroup{}
+
 func main() {
+
 	a := app.New()
 	w := a.NewWindow("Color Picker")
 
@@ -54,8 +61,11 @@ func main() {
 	var btn2 *widget.Button
 
 	btn = widget.NewButton("Start Picking", func() {
-		mouse(rect, &data, list, btn, btn2)
+		wg.Add(1)
+		isCurrentlyPicking = true
+		go mouse(rect, &data, list, btn)
 	})
+	wg.Wait()
 
 	btn2 = widget.NewButton("Clear list", func() {
 		data = data[:0]
@@ -73,38 +83,54 @@ func main() {
 	w.ShowAndRun()
 }
 
-func mouse(rect *canvas.Rectangle, data *[]string, list *widget.List, btn *widget.Button, btn2 *widget.Button) {
+func mouse(rect *canvas.Rectangle, data *[]string, list *widget.List, btn *widget.Button) {
 
-	hook.Register(hook.MouseMove, []string{}, func(e hook.Event) {
-		c := robotgo.GetPixelColor(int(e.X), int(e.Y))
+	if eventsRegistered == false {
 
-		btn.Text = "..."
-		btn.Refresh()
+		hook.Register(hook.MouseMove, []string{}, func(e hook.Event) {
 
-		newColor, _ := ParseHexColor("#" + c)
-		rect.FillColor = newColor
-		rect.Refresh()
-	})
+			if isCurrentlyPicking == true {
+				c := robotgo.GetPixelColor(int(e.X), int(e.Y))
 
-	hook.Register(hook.MouseDown, []string{}, func(e hook.Event) {
-		c := robotgo.GetPixelColor(int(e.X), int(e.Y))
+				fmt.Println("---> Mouse moving")
 
-		*data = append(*data, c)
+				btn.Text = "..."
+				btn.Refresh()
 
-		btn.Text = "Pick another color"
-		btn.Refresh()
+				newColor, _ := ParseHexColor("#" + c)
+				rect.FillColor = newColor
+				rect.Refresh()
+			}
+		})
 
-		newColor, _ := ParseHexColor("#" + c)
-		rect.FillColor = newColor
-		rect.Refresh()
+		hook.Register(hook.MouseDown, []string{}, func(e hook.Event) {
+			if btn.Text == "..." {
+				c := robotgo.GetPixelColor(int(e.X), int(e.Y))
 
-		list.Refresh()
+				fmt.Println("---> Mouse click")
 
-		hook.End()
-	})
+				*data = append(*data, c)
 
-	s := hook.Start()
-	<-hook.Process(s)
+				btn.Text = "Pick another color"
+				btn.Refresh()
+
+				newColor, _ := ParseHexColor("#" + c)
+				rect.FillColor = newColor
+				rect.Refresh()
+
+				list.Refresh()
+
+				isCurrentlyPicking = false
+			}
+		})
+
+		eventsRegistered = true
+		wg.Done()
+
+		s := hook.Start()
+		<-hook.Process(s)
+
+	}
 }
 
 func HexToName(hex string) string {
