@@ -5,7 +5,7 @@ go 1.18
 require (
 	fyne.io/fyne/v2 v2.3.4
 	github.com/atotto/clipboard v0.1.4
-	github.com/dachinat/colornameconv v0.1.4
+	github.com/dachinat/colornameconv v0.1.5
 	github.com/go-vgo/robotgo v1.0.0-beta5.3
 	github.com/robotn/gohook v0.40.0
 )

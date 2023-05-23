@@ -92,8 +92,6 @@ func mouse(rect *canvas.Rectangle, data *[]string, list *widget.List, btn *widge
 			if isCurrentlyPicking == true {
 				c := robotgo.GetPixelColor(int(e.X), int(e.Y))
 
-				fmt.Println("---> Mouse moving")
-
 				btn.Text = "..."
 				btn.Refresh()
 
@@ -106,8 +104,6 @@ func mouse(rect *canvas.Rectangle, data *[]string, list *widget.List, btn *widge
 		hook.Register(hook.MouseDown, []string{}, func(e hook.Event) {
 			if btn.Text == "..." {
 				c := robotgo.GetPixelColor(int(e.X), int(e.Y))
-
-				fmt.Println("---> Mouse click")
 
 				*data = append(*data, c)
 
